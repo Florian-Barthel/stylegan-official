@@ -19,6 +19,7 @@ import numpy as np
 import tensorflow as tf
 import PIL.Image
 import dnnlib.tflib as tflib
+from tqdm import tqdm
 
 from training import dataset
 
@@ -478,7 +479,51 @@ def create_lsun_wide(tfrecord_dir, lmdb_dir, width=512, height=384, max_images=N
                 if tfr.cur_images == max_images:
                     break
     print()
+#----------------------------------------------------------------------------
 
+
+def create_car_dataset(tfrecord_dir='./datasets/cars', lmdb_dir='../car_dataset/ratio_exif', width=1024, height=640, max_images=None):
+    assert width == 2 ** int(np.round(np.log2(width)))
+    assert height <= width
+    print('Loading LSUN dataset from "%s"' % lmdb_dir)
+    import lmdb # pip install lmdb # pylint: disable=import-error
+    import cv2 # pip install opencv-python
+    import io
+    with lmdb.open(lmdb_dir, readonly=True).begin(write=False) as txn:
+        total_images = txn.stat()['entries'] # pylint: disable=no-value-for-parameter
+        if max_images is None:
+            max_images = total_images
+        with TFRecordExporter(tfrecord_dir, max_images, print_progress=False) as tfr:
+            for idx, (_key, value) in enumerate(txn.cursor()):
+                try:
+                    try:
+                        img = cv2.imdecode(np.fromstring(value, dtype=np.uint8), 1)
+                        if img is None:
+                            raise IOError('cv2.imdecode failed')
+                        img = img[:, :, ::-1] # BGR => RGB
+                    except IOError:
+                        img = np.asarray(PIL.Image.open(io.BytesIO(value)))
+
+                    # ch = int(np.round(width * img.shape[0] / img.shape[1]))
+                    # if img.shape[1] < width or ch < height:
+                    #     continue
+
+                    # img = img[(img.shape[0] - ch) // 2 : (img.shape[0] + ch) // 2]
+                    img = PIL.Image.fromarray(img, 'RGB')
+                    img = img.resize((width, height), PIL.Image.ANTIALIAS)
+                    img = np.asarray(img)
+                    img = img.transpose([2, 0, 1]) # HWC => CHW
+
+                    canvas = np.zeros([3, width, width], dtype=np.uint8)
+                    canvas[:, (width - height) // 2 : (width + height) // 2] = img
+                    tfr.add_image(canvas)
+                    print('\r%d / %d => %d ' % (idx + 1, total_images, tfr.cur_images), end='')
+
+                except:
+                    print(sys.exc_info()[1])
+                if tfr.cur_images == max_images:
+                    break
+    print()
 #----------------------------------------------------------------------------
 
 def create_celeba(tfrecord_dir, celeba_dir, cx=89, cy=121):
@@ -500,31 +545,40 @@ def create_celeba(tfrecord_dir, celeba_dir, cx=89, cy=121):
 
 #----------------------------------------------------------------------------
 
-def create_from_images(tfrecord_dir, image_dir, shuffle):
+def create_from_images(tfrecord_dir='./datasets/cars', image_dir='E:/carswithcolors/ratio_exif', shuffle=False, width=512, height=320):
     print('Loading images from "%s"' % image_dir)
     image_filenames = sorted(glob.glob(os.path.join(image_dir, '*')))
     if len(image_filenames) == 0:
         error('No input images found')
 
     img = np.asarray(PIL.Image.open(image_filenames[0]))
-    resolution = img.shape[0]
-    channels = img.shape[2] if img.ndim == 3 else 1
-    if img.shape[1] != resolution:
-        error('Input images must have the same width and height')
-    if resolution != 2 ** int(np.floor(np.log2(resolution))):
-        error('Input image resolution must be a power-of-two')
-    if channels not in [1, 3]:
-        error('Input images must be stored as RGB or grayscale')
+    channels = img.shape[2]
+    if channels != 3:
+        error('Input images must be stored as RGB')
 
     with TFRecordExporter(tfrecord_dir, len(image_filenames)) as tfr:
         order = tfr.choose_shuffled_order() if shuffle else np.arange(len(image_filenames))
         for idx in range(order.size):
-            img = np.asarray(PIL.Image.open(image_filenames[order[idx]]))
-            if channels == 1:
-                img = img[np.newaxis, :, :] # HW => CHW
-            else:
-                img = img.transpose([2, 0, 1]) # HWC => CHW
-            tfr.add_image(img)
+            img = PIL.Image.open(image_filenames[order[idx]])
+
+
+            img = img.resize((width, height), PIL.Image.ANTIALIAS)
+            img = np.asarray(img)
+            if len(img.shape) is not 3:
+                print('grey')
+                print(image_filenames[order[idx]])
+                print()
+                continue
+            if img.shape[2] is not 3:
+                print(img.shape[2])
+                print(image_filenames[order[idx]])
+                print()
+                continue
+            img = img.transpose([2, 0, 1]) # HWC => CHW
+
+            canvas = np.zeros([3, width, width], dtype=np.uint8)
+            canvas[:, (width - height) // 2: (width + height) // 2] = img
+            tfr.add_image(canvas)
 
 #----------------------------------------------------------------------------
 
@@ -640,6 +694,6 @@ def execute_cmdline(argv):
 #----------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    execute_cmdline(sys.argv)
-
+    #execute_cmdline(sys.argv)
+    create_from_images()
 #----------------------------------------------------------------------------

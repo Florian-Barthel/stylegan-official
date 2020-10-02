@@ -1,11 +1,3 @@
-# Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
-#
-# This work is licensed under the Creative Commons Attribution-NonCommercial
-# 4.0 International License. To view a copy of this license, visit
-# http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to
-# Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
-
-"""Minimal script for reproducing the figures of the StyleGAN paper using pre-trained generators."""
 
 import os
 import pickle
@@ -16,67 +8,9 @@ import dnnlib.tflib as tflib
 import config
 import training.misc as misc
 
-#----------------------------------------------------------------------------
-# Helpers for loading and using pre-trained generators.
-
-url_ffhq        = 'https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ' # karras2019stylegan-ffhq-1024x1024.pkl
-url_celebahq    = 'https://drive.google.com/uc?id=1MGqJl28pN4t7SAtSrPdSRJSQJqahkzUf' # karras2019stylegan-celebahq-1024x1024.pkl
-url_bedrooms    = 'https://drive.google.com/uc?id=1MOSKeGF0FJcivpBI7s63V9YHloUTORiF' # karras2019stylegan-bedrooms-256x256.pkl
-url_cars        = 'https://drive.google.com/uc?id=1MJ6iCfNtMIRicihwRorsM3b7mmtmK9c3' # karras2019stylegan-cars-512x384.pkl
-url_cats        = 'https://drive.google.com/uc?id=1MQywl0FNt6lHu8E_EUqnRbviagS7fbiJ' # karras2019stylegan-cats-256x256.pkl
 
 synthesis_kwargs = dict(output_transform=dict(func=tflib.convert_images_to_uint8, nchw_to_nhwc=True), minibatch_size=8)
 
-_Gs_cache = dict()
-
-def load_Gs(url):
-    if url not in _Gs_cache:
-        with dnnlib.util.open_url(url, cache_dir=config.cache_dir) as f:
-            _G, _D, Gs = pickle.load(f)
-        _Gs_cache[url] = Gs
-    return _Gs_cache[url]
-
-#----------------------------------------------------------------------------
-# Figures 2, 3, 10, 11, 12: Multi-resolution grid of uncurated result images.
-
-def draw_uncurated_result_figure(png, Gs, cx, cy, cw, ch, rows, lods, seed):
-    print(png)
-    latents = np.random.RandomState(seed).randn(sum(rows * 2**lod for lod in lods), Gs.input_shape[1])
-    images = Gs.run(latents, None, **synthesis_kwargs) # [seed, y, x, rgb]
-
-    canvas = PIL.Image.new('RGB', (sum(cw // 2**lod for lod in lods), ch * rows), 'white')
-    image_iter = iter(list(images))
-    for col, lod in enumerate(lods):
-        for row in range(rows * 2**lod):
-            image = PIL.Image.fromarray(next(image_iter), 'RGB')
-            image = image.crop((cx, cy, cx + cw, cy + ch))
-            image = image.resize((cw // 2**lod, ch // 2**lod), PIL.Image.ANTIALIAS)
-            canvas.paste(image, (sum(cw // 2**lod for lod in lods[:col]), row * ch // 2**lod))
-    canvas.save(png)
-
-#----------------------------------------------------------------------------
-# Figure 3: Style mixing.
-
-def draw_style_mixing_figure(png, Gs, w, h, src_seeds, dst_seeds, style_ranges):
-    print(png)
-    src_latents = np.stack(np.random.RandomState(seed).randn(Gs.input_shape[1]) for seed in src_seeds)
-    dst_latents = np.stack(np.random.RandomState(seed).randn(Gs.input_shape[1]) for seed in dst_seeds)
-    src_dlatents = Gs.components.mapping.run(src_latents, None) # [seed, layer, component]
-    dst_dlatents = Gs.components.mapping.run(dst_latents, None) # [seed, layer, component]
-    src_images = Gs.components.synthesis.run(src_dlatents, randomize_noise=False, **synthesis_kwargs)
-    dst_images = Gs.components.synthesis.run(dst_dlatents, randomize_noise=False, **synthesis_kwargs)
-
-    canvas = PIL.Image.new('RGB', (w * (len(src_seeds) + 1), h * (len(dst_seeds) + 1)), 'white')
-    for col, src_image in enumerate(list(src_images)):
-        canvas.paste(PIL.Image.fromarray(src_image, 'RGB'), ((col + 1) * w, 0))
-    for row, dst_image in enumerate(list(dst_images)):
-        canvas.paste(PIL.Image.fromarray(dst_image, 'RGB'), (0, (row + 1) * h))
-        row_dlatents = np.stack([dst_dlatents[row]] * len(src_seeds))
-        row_dlatents[:, style_ranges[row]] = src_dlatents[:, style_ranges[row]]
-        row_images = Gs.components.synthesis.run(row_dlatents, randomize_noise=False, **synthesis_kwargs)
-        for col, image in enumerate(list(row_images)):
-            canvas.paste(PIL.Image.fromarray(image, 'RGB'), ((col + 1) * w, (row + 1) * h))
-    canvas.save(png)
 
 
 def draw_style_mixing_figure_transition(png, Gs, w, h, style1_seeds, style2_seed, style_ranges):
@@ -105,19 +39,14 @@ def draw_style_mixing_figure_transition(png, Gs, w, h, style1_seeds, style2_seed
 
 def draw_noise_detail_figure(png, Gs, w, h, num_samples, seeds):
     print(png)
-    canvas = PIL.Image.new('RGB', (w * 3, h * len(seeds)), 'white')
+    canvas = PIL.Image.new('RGB', (w * 2, h * len(seeds)), 'white')
     for row, seed in enumerate(seeds):
         latents = np.stack([np.random.RandomState(seed).randn(Gs.input_shape[1])] * num_samples)
         images = Gs.run(latents, None, truncation_psi=1, **synthesis_kwargs)
         canvas.paste(PIL.Image.fromarray(images[0], 'RGB'), (0, row * h))
-        for i in range(4):
-            crop = PIL.Image.fromarray(images[i + 1], 'RGB')
-            crop = crop.crop((650, 180, 906, 436))
-            crop = crop.resize((w//2, h//2), PIL.Image.NEAREST)
-            canvas.paste(crop, (w + (i%2) * w//2, row * h + (i//2) * h//2))
         diff = np.std(np.mean(images, axis=3), axis=0) * 4
         diff = np.clip(diff + 0.5, 0, 255).astype(np.uint8)
-        canvas.paste(PIL.Image.fromarray(diff, 'L'), (w * 2, row * h))
+        canvas.paste(PIL.Image.fromarray(diff, 'L'), (w, row * h))
     canvas.save(png)
 
 #----------------------------------------------------------------------------
@@ -136,12 +65,13 @@ def draw_noise_components_figure(png, Gs, w, h, seeds, noise_ranges, flips):
         range_images[flips, :, :] = range_images[flips, :, ::-1]
         all_images.append(list(range_images))
 
-    canvas = PIL.Image.new('RGB', (w * 2, h * 2), 'white')
+    canvas = PIL.Image.new('RGB', (w * 2, h * len(seeds)), 'white')
     for col, col_images in enumerate(zip(*all_images)):
-        canvas.paste(PIL.Image.fromarray(col_images[0], 'RGB').crop((0, 0, w//2, h)), (col * w, 0))
-        canvas.paste(PIL.Image.fromarray(col_images[1], 'RGB').crop((w//2, 0, w, h)), (col * w + w//2, 0))
-        canvas.paste(PIL.Image.fromarray(col_images[2], 'RGB').crop((0, 0, w//2, h)), (col * w, h))
-        canvas.paste(PIL.Image.fromarray(col_images[3], 'RGB').crop((w//2, 0, w, h)), (col * w + w//2, h))
+        canvas.paste(PIL.Image.fromarray(col_images[0], 'RGB'), (0, col * h))
+        canvas.paste(PIL.Image.fromarray(col_images[1], 'RGB'), (w, col * h))
+        # canvas.paste(PIL.Image.fromarray(col_images[1], 'RGB'), (col * w + w//2, 0))
+        #canvas.paste(PIL.Image.fromarray(col_images[2], 'RGB').crop((0, 0, w//2, h)), (col * w, h))
+        #canvas.paste(PIL.Image.fromarray(col_images[3], 'RGB').crop((w//2, 0, w, h)), (col * w + w//2, h))
     canvas.save(png)
 
 #----------------------------------------------------------------------------
@@ -166,12 +96,11 @@ def draw_truncation_trick_figure(png, Gs, w, h, seeds, psis):
 
 def main():
     tflib.init_tf()
-    os.makedirs(config.result_dir, exist_ok=True)
-    baseline_network_pkl = 'results/00015-sgan-ffhq256-1gpu/network-snapshot-015326.pkl'
-    no_style_mix_network_pkl = 'results/00023-sgan-ffhq256-2gpu-remove-style-mix/network-snapshot-013726.pkl'
+    baseline_network_pkl = '../results/00002-sgan-car512-2gpu/network-snapshot-023949.pkl'
+    no_noise_network_pkl = '../../results/00022-sgan-ffhq256-2gpu-no-noise/network-snapshot-014926.pkl'
 
     _G, _D, Gs_baseline = misc.load_pkl(baseline_network_pkl)
-    _G, _D, Gs_no_style_mix = misc.load_pkl(no_style_mix_network_pkl)
+    # _G, _D, Gs_no_nosie = misc.load_pkl(no_noise_network_pkl)
 
     # 888,1733
     # draw_uncurated_result_figure(os.path.join(config.result_dir, 'figure02-uncurated-ffhq.png'), Gs, cx=0, cy=0, cw=256, ch=256, rows=3, lods=[0,1,2,2,3,3], seed=5)
@@ -180,10 +109,10 @@ def main():
 
 
     # draw_style_mixing_figure_transition(os.path.join(config.result_dir, 'no-style-mixing.png'), Gs_baseline, w=256, h=256, style1_seeds=[222, 1733, 4], style2_seed=[888], style_ranges=[list(range(i-2, i)) for i in range(2, 16, 2)])
-    draw_style_mixing_figure_transition(os.path.join(config.result_dir, 'no-style-mixing.png'), Gs_no_style_mix, w=256, h=256, style1_seeds=[12, 23, 34], style2_seed=[45], style_ranges=[list(range(i-2, i)) for i in range(2, 16, 2)])
+    #draw_style_mixing_figure_transition(os.path.join(config.result_dir, 'no-style-mixing.png'), Gs_no_style_mix, w=256, h=256, style1_seeds=[12, 23, 34], style2_seed=[45], style_ranges=[list(range(i-2, i)) for i in range(2, 16, 2)])
 
-    #draw_noise_detail_figure(os.path.join(config.result_dir, 'figure04-noise-detail.png'), Gs, w=256, h=256, num_samples=100, seeds=[1157,1012])
-    #draw_noise_components_figure(os.path.join(config.result_dir, 'figure05-noise-components.png'), Gs, w=256, h=256, seeds=[1967,1555], noise_ranges=[range(0, 14), range(0, 0), range(8, 14), range(0, 8)], flips=[1])
+    draw_noise_detail_figure('images/noise_detail.png', Gs_baseline, w=512, h=512, num_samples=100, seeds=[5, 4])
+    draw_noise_components_figure('images/noise-components.png', Gs_baseline, w=512, h=512, seeds=[5, 4], noise_ranges=[range(0, 14), range(0, 0)], flips=[])
     #draw_truncation_trick_figure(os.path.join(config.result_dir, 'figure08-truncation-trick.png'), Gs, w=256, h=256, seeds=[92,388], psis=[1, 0.7, 0.5, 0, -0.5, -1])
 
 

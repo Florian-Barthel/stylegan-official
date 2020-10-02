@@ -23,11 +23,25 @@ from training import dataset
 # Standard metrics.
 
 fid50k = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance.FID', name='fid50k', num_images=50000, minibatch_per_gpu=8)
+fid50k_no_noise = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_without_noise.FID', name='fid50k_no_noise', num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_10 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-0', truncation_psi=1.0, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_11 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-1', truncation_psi=1.1, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_12 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-2', truncation_psi=1.2, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_13 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-3', truncation_psi=1.3, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_14 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-4', truncation_psi=1.4, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_15 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-5', truncation_psi=1.5, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_16 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-6', truncation_psi=1.6, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_17 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-7', truncation_psi=1.7, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_18 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-8', truncation_psi=1.8, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_19 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-1-9', truncation_psi=1.9, num_images=50000, minibatch_per_gpu=8)
+fid50k_truncation_20 = dnnlib.EasyDict(func_name='metrics.frechet_inception_distance_truncation.FID', name='fid50k_truncation-8-2-0', truncation_psi=2.0, num_images=50000, minibatch_per_gpu=8)
+
+is50k = dnnlib.EasyDict(func_name='metrics.inception_score.IS', name='is50k', num_images=50000, num_splits=10, minibatch_per_gpu=8)
 ppl_zfull = dnnlib.EasyDict(func_name='metrics.perceptual_path_length.PPL', name='ppl_zfull', num_samples=100000, epsilon=1e-4, space='z', sampling='full', minibatch_per_gpu=16)
 ppl_wfull = dnnlib.EasyDict(func_name='metrics.perceptual_path_length.PPL', name='ppl_wfull', num_samples=100000, epsilon=1e-4, space='w', sampling='full', minibatch_per_gpu=16)
 ppl_zend = dnnlib.EasyDict(func_name='metrics.perceptual_path_length.PPL', name='ppl_zend', num_samples=100000, epsilon=1e-4, space='z', sampling='end', minibatch_per_gpu=16)
 ppl_wend = dnnlib.EasyDict(func_name='metrics.perceptual_path_length.PPL', name='ppl_wend', num_samples=100000, epsilon=1e-4, space='w', sampling='end', minibatch_per_gpu=16)
-ls = dnnlib.EasyDict(func_name='metrics.linear_separability.LS', name='ls', num_samples=200000, num_keep=100000, attrib_indices=range(40), minibatch_per_gpu=4)
+ls = dnnlib.EasyDict(func_name='metrics.linear_separability.LS', name='ls', num_samples=200000, num_keep=100000, attrib_indices=range(40), minibatch_per_gpu=1)
 dummy = dnnlib.EasyDict(func_name='metrics.metric_base.DummyMetric', name='dummy') # for debugging
 
 #----------------------------------------------------------------------------

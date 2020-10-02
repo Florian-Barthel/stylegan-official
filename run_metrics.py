@@ -64,22 +64,38 @@ def main():
 
     # Which metrics to evaluate?
     metrics = []
-    # metrics += [metric_base.fid50k]
+    metrics += [metric_base.fid50k_downscale]
+    #metrics += [metric_base.fid50k_no_noise]
+    # metrics += [metric_base.fid50k_truncation_10]
+    # metrics += [metric_base.fid50k_truncation_11]
+    # metrics += [metric_base.fid50k_truncation_12]
+    # metrics += [metric_base.fid50k_truncation_13]
+    # metrics += [metric_base.fid50k_truncation_14]
+    # metrics += [metric_base.fid50k_truncation_15]
+    # metrics += [metric_base.fid50k_truncation_16]
+    # metrics += [metric_base.fid50k_truncation_17]
+    # metrics += [metric_base.fid50k_truncation_18]
+    # metrics += [metric_base.fid50k_truncation_19]
+    # metrics += [metric_base.fid50k_truncation_20]
+    # metrics += [metric_base.is50k]
     # metrics += [metric_base.ppl_zfull]
     # metrics += [metric_base.ppl_wend]
     # metrics += [metric_base.ppl_wfull]
     # metrics += [metric_base.ppl_zend]
-    metrics += [metric_base.ls]
+    # metrics += [metric_base.ls]
     # metrics += [metric_base.dummy]
 
     # Which networks to evaluate them on?
     tasks = []
-    #tasks += [EasyDict(run_func_name='run_metrics.run_pickle', network_pkl='https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ', dataset_args=EasyDict(tfrecord_dir='ffhq', shuffle_mb=0), mirror_augment=True)] # karras2019stylegan-ffhq-1024x1024.pkl
-    #tasks += [EasyDict(run_func_name='run_metrics.run_snapshot', run_id=100, snapshot=25000)]
-    tasks += [EasyDict(run_func_name='run_metrics.run_all_snapshots', run_id=15)]
+    tasks += [EasyDict(run_func_name='run_metrics.run_pickle', network_pkl='https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ', dataset_args=EasyDict(tfrecord_dir='ffhq', shuffle_mb=0), mirror_augment=True)] # karras2019stylegan-ffhq-1024x1024.pkl
+    # tasks += [EasyDict(run_func_name='run_metrics.run_snapshot', run_id=15, snapshot=14526)]
+    # tasks += [EasyDict(run_func_name='run_metrics.run_snapshot', run_id=23, snapshot=11726)]
+    # tasks += [EasyDict(run_func_name='run_metrics.run_snapshot', run_id=29, snapshot=14926)]
+    # tasks += [EasyDict(run_func_name='run_metrics.run_all_snapshots', run_id=3)]
+    # tasks += [EasyDict(run_func_name='run_metrics.run_all_snapshots', run_id=4)]
 
     # How many GPUs to use?
-    #submit_config.num_gpus = 1
+    # submit_config.num_gpus = 1
     submit_config.num_gpus = 2
     #submit_config.num_gpus = 4
     #submit_config.num_gpus = 8

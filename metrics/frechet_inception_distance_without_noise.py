@@ -26,7 +26,7 @@ class FID(metric_base.MetricBase):
 
     def _evaluate(self, Gs, num_gpus):
         minibatch_size = num_gpus * self.minibatch_per_gpu
-        inception = misc.load_pkl('http://d36zk2xti64re0.cloudfront.net/stylegan1/networks/metrics/inception_v3_features.pkl') # inception_v3_features.pkl
+        inception = misc.load_pkl('https://drive.google.com/uc?id=1MzTY44rLToO5APn8TZmfR7_ENSe5aZUn') # inception_v3_features.pkl
         activations = np.empty([self.num_images, inception.output_shape[1]], dtype=np.float32)
 
         # Calculate statistics for reals.
@@ -50,9 +50,10 @@ class FID(metric_base.MetricBase):
         for gpu_idx in range(num_gpus):
             with tf.device('/gpu:%d' % gpu_idx):
                 Gs_clone = Gs.clone()
+                Gs_clone.use_noise = False
                 inception_clone = inception.clone()
                 latents = tf.random_normal([self.minibatch_per_gpu] + Gs_clone.input_shape[1:])
-                images = Gs_clone.get_output_for(latents, None, is_validation=True, randomize_noise=True)
+                images = Gs_clone.get_output_for(latents, None, is_validation=True, randomize_noise=False)
                 images = tflib.convert_images_to_uint8(images)
                 result_expr.append(inception_clone.get_output_for(images))
 

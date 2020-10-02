@@ -41,12 +41,12 @@ class TFRecordDataset:
         label_file      = None,     # Relative path of the labels file, None = autodetect.
         max_label_size  = 0,        # 0 = no labels, 'full' = full labels, <int> = N first label components.
         repeat          = True,     # Repeat dataset indefinitely.
-        shuffle_mb      = 4096,     # Shuffle data within specified window (megabytes), 0 = disable shuffling.
-        prefetch_mb     = 2048,     # Amount of data to prefetch (megabytes), 0 = disable prefetching.
-        buffer_mb       = 256,      # Read buffer size (megabytes).
-        num_threads     = 2):       # Number of concurrent threads.
+        shuffle_mb      = 0, # 4096,     # Shuffle data within specified window (megabytes), 0 = disable shuffling.
+        prefetch_mb     = 0, # 2048,     # Amount of data to prefetch (megabytes), 0 = disable prefetching.
+        buffer_mb       = 0,# 256,      # Read buffer size (megabytes).
+        num_threads     = 1): # 2):       # Number of concurrent threads.
 
-        self.tfrecord_dir       = tfrecord_dir
+        self.tfrecord_dir       = '../datasets/cars' # tfrecord_dir
         self.resolution         = None
         self.resolution_log2    = None
         self.shape              = []        # [channel, height, width]

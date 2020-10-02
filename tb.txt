@@ -1,0 +1,2 @@
+nohup: ignoring input
+TensorBoard 1.15.0 at http://barthefl:6006/ (Press CTRL+C to quit)

@@ -1,0 +1,91 @@
+nohup: ignoring input
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:34: The name tf.Dimension is deprecated. Please use tf.compat.v1.Dimension instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:74: The name tf.variable_scope is deprecated. Please use tf.compat.v1.variable_scope instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:128: The name tf.Session is deprecated. Please use tf.compat.v1.Session instead.
+
+Creating the run dir: results/00027-sgan-ffhq256-2gpu-remove-mapping
+Copying files to the run dir
+dnnlib: Running training.training_loop.training_loop() on localhost...
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:97: The name tf.get_default_session is deprecated. Please use tf.compat.v1.get_default_session instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:109: The name tf.set_random_seed is deprecated. Please use tf.compat.v1.set_random_seed instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:132: The name tf.ConfigProto is deprecated. Please use tf.compat.v1.ConfigProto instead.
+
+Streaming data using training.dataset.TFRecordDataset...
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:75: The name tf.python_io.TFRecordOptions is deprecated. Please use tf.io.TFRecordOptions instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:75: The name tf.python_io.TFRecordCompressionType is deprecated. Please use tf.compat.v1.python_io.TFRecordCompressionType instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:76: tf_record_iterator (from tensorflow.python.lib.io.tf_record) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use eager execution and: 
+`tf.data.TFRecordDataset(path)`
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:114: The name tf.placeholder is deprecated. Please use tf.compat.v1.placeholder instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:196: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:200: The name tf.assign is deprecated. Please use tf.compat.v1.assign instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/venv2/lib/python3.6/site-packages/tensorflow_core/python/autograph/converters/directives.py:119: The name tf.parse_single_example is deprecated. Please use tf.io.parse_single_example instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/venv2/lib/python3.6/site-packages/tensorflow_core/python/autograph/converters/directives.py:119: The name tf.FixedLenFeature is deprecated. Please use tf.io.FixedLenFeature instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/venv2/lib/python3.6/site-packages/tensorflow_core/python/data/util/random_seed.py:58: where (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:132: The name tf.data.Iterator is deprecated. Please use tf.compat.v1.data.Iterator instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:132: DatasetV1.output_types (from tensorflow.python.data.ops.dataset_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.data.get_output_types(dataset)`.
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/dataset.py:132: DatasetV1.output_shapes (from tensorflow.python.data.ops.dataset_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.data.get_output_shapes(dataset)`.
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/venv2/lib/python3.6/site-packages/tensorflow_core/python/data/ops/iterator_ops.py:347: Iterator.output_types (from tensorflow.python.data.ops.iterator_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.data.get_output_types(iterator)`.
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/venv2/lib/python3.6/site-packages/tensorflow_core/python/data/ops/iterator_ops.py:348: Iterator.output_shapes (from tensorflow.python.data.ops.iterator_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.data.get_output_shapes(iterator)`.
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/venv2/lib/python3.6/site-packages/tensorflow_core/python/data/ops/iterator_ops.py:350: Iterator.output_classes (from tensorflow.python.data.ops.iterator_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use `tf.compat.v1.data.get_output_classes(iterator)`.
+Dataset shape = [3, 256, 256]
+Dynamic range = [0, 255]
+Label size    = 0
+Constructing networks...
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/network.py:150: The name tf.AUTO_REUSE is deprecated. Please use tf.compat.v1.AUTO_REUSE instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/tfutil.py:76: The name tf.VariableScope is deprecated. Please use tf.compat.v1.VariableScope instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/network.py:151: The name tf.get_variable_scope is deprecated. Please use tf.compat.v1.get_variable_scope instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/networks_stylegan_no_mapping.py:485: The name tf.get_variable is deprecated. Please use tf.compat.v1.get_variable instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/training/networks_stylegan_no_mapping.py:254: The name tf.rsqrt is deprecated. Please use tf.math.rsqrt instead.
+
+WARNING:tensorflow:From /data/hdd1/barthefl/official-project/dnnlib/tflib/network.py:182: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+Traceback (most recent call last):
+  File "experiment_3_remove_mapping.py", line 98, in <module>
+    main()
+  File "experiment_3_remove_mapping.py", line 93, in main
+    dnnlib.submit_run(**kwargs)
+  File "/data/hdd1/barthefl/official-project/dnnlib/submission/submit.py", line 290, in submit_run
+    run_wrapper(submit_config)
+  File "/data/hdd1/barthefl/official-project/dnnlib/submission/submit.py", line 242, in run_wrapper
+    util.call_func_by_name(func_name=submit_config.run_func_name, submit_config=submit_config, **submit_config.run_func_kwargs)
+  File "/data/hdd1/barthefl/official-project/dnnlib/util.py", line 257, in call_func_by_name
+    return func_obj(*args, **kwargs)
+  File "/data/hdd1/barthefl/official-project/training/training_loop.py", line 156, in training_loop
+    G = tflib.Network('G', num_channels=training_set.shape[0], resolution=training_set.shape[1], label_size=training_set.label_size, **G_args)
+  File "/data/hdd1/barthefl/official-project/dnnlib/tflib/network.py", line 98, in __init__
+    self._init_graph()
+  File "/data/hdd1/barthefl/official-project/dnnlib/tflib/network.py", line 155, in _init_graph
+    out_expr = self._build_func(*self.input_templates, **build_kwargs)
+  File "/data/hdd1/barthefl/official-project/training/networks_stylegan_no_mapping.py", line 380, in G_style
+    latents = tflib.lerp(dlatent_avg, latents, coefs)
+UnboundLocalError: local variable 'latents' referenced before assignment

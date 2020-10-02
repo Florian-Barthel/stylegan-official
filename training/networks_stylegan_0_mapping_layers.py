@@ -388,7 +388,7 @@ def G_mapping(
     label_size              = 0,            # Label dimensionality, 0 if no labels.
     dlatent_size            = 512,          # Disentangled latent (W) dimensionality.
     dlatent_broadcast       = None,         # Output disentangled latent (W) as [minibatch, dlatent_size] or [minibatch, dlatent_broadcast, dlatent_size].
-    mapping_layers          = 8,            # Number of mapping layers.
+    mapping_layers          = 0,            # Number of mapping layers.
     mapping_fmaps           = 512,          # Number of activations in the mapping layers.
     mapping_lrmul           = 0.01,         # Learning rate multiplier for the mapping layers.
     mapping_nonlinearity    = 'lrelu',      # Activation function: 'relu', 'lrelu'.
@@ -538,8 +538,6 @@ def G_synthesis(
         for res in range(3, resolution_log2 + 1):
             lod = resolution_log2 - res
             x = block(res, x)
-            if res == resolution_log2:
-                return x
             img = torgb(res, x)
             images_out = upscale2d(images_out)
             with tf.variable_scope('Grow_lod%d' % lod):
